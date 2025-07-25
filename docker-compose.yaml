@@ -17,7 +17,7 @@ services:
     expose:
       - "8022"
     environment:
-      LOGGING_LEVEL: "INFO"
+      # LOGGING_LEVEL: "INFO"
       IS_HEALTH_CHECK_ON: "no"
 
     networks:

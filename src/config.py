@@ -82,4 +82,11 @@ def init_logger():
         "%(asctime)s [%(name)14s] %(levelprefix)s %(client_addr)s - '%(request_line)s' %(status_code)s"
     )
 
+    LOGGING_CONFIG['loggers']['app'] = {
+        'handlers': ['default',],
+        'formatter': 'default',
+        'level': settings.LOGGING_LEVEL,
+        'propagate': True,
+    }
+
     logging.config.dictConfig(LOGGING_CONFIG)
