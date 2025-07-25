@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import logging
+import shutil
 import tempfile
 import uuid
 from typing import Annotated
@@ -27,7 +28,7 @@ async def send(
     import os
 
     request_id = x_cellosign_request_id or str(uuid.uuid4())
-    logger.info('[%s] got check_file request', request_id, extra={'request_id': request_id})
+    logger.info('start job [%s]', request_id, extra={'request_id': request_id})
     file_ = None
     output_dir = None
     try:
@@ -37,10 +38,9 @@ async def send(
         tmp_file.write(document_bytes)
         tmp_file.flush()
         file_ = tmp_file.name
+        output_dir = tempfile.mkdtemp(prefix=f'{x_cellosign_request_id}-')
 
         logger.info('[%s] saved document to temporary file %s', request_id, file_, extra={'request_id': request_id})
-
-        output_dir = tempfile.mkdtemp(prefix=x_cellosign_request_id)
 
         if body.document_type == 'docx':
             command = [
@@ -63,7 +63,7 @@ async def send(
             )
 
             stdout, stderr = await process.communicate()
-            logger.info(stdout)
+            logger.info('stdout: %s', str(stdout.decode()))
 
             if process.returncode != 0:
                 raise Exception(f'Conversion failed: {stderr.decode()}')
@@ -103,7 +103,7 @@ async def send(
     finally:
         import os
 
-        if file_:
+        if file_ and os.path.isfile(file_):
             try:
                 os.remove(file_)
                 logger.info('[%s] removed temporary file %s', request_id, file_, extra={'request_id': request_id})
@@ -115,11 +115,10 @@ async def send(
                     cleanup_error,
                     extra={'request_id': request_id},
                 )
+
         if output_dir and os.path.isdir(output_dir):
             try:
-                for f in os.listdir(output_dir):
-                    os.remove(os.path.join(output_dir, f))
-                os.rmdir(output_dir)
+                shutil.rmtree(output_dir)
                 logger.info(
                     '[%s] removed temporary output directory %s',
                     request_id,
