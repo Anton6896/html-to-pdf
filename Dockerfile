@@ -7,7 +7,7 @@ COPY --from=fonts / /usr/share/fonts/cellosign
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV TZ=Asia/Jerusalem
-ENV PYTHONPATH "${PYTHONPATH}:/src"
+ENV PYTHONPATH="${PYTHONPATH}:/src"
 
 
 RUN echo "adding office to apk"
@@ -55,12 +55,8 @@ CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8022"]
 
 
 
-# docker buildx build -f Dockerfile.custom.server --platform linux/amd64 -t unoserver-docker:my .
-# docker run --platform linux/amd64 --rm -it -u 0  -v "$(pwd)/my-data":/data -w /data unoserver-docker:my bash
+# docker buildx build -f Dockerfile --platform linux/amd64 -t unoserver-docker:my .
+# docker run --platform linux/amd64 --rm -it -u 0  -v "$(pwd)/src":/src -w / unoserver-docker:my bash
 
-# soffice --convert-to pdf 1-page.docx
-# soffice --headless --convert-to pdf 1-page.docx --outdir /data
-# sh -c "soffice --headless --convert-to pdf 1-page.docx --outdir /data && cat /data/myfile.pdf
-
-# docker tag unoserver-docker:my hub.cellosign.com/cellosign/unoserver-docker:local
+# docker tag unoserver-docker:my hub.cellosign.com/cellosign/unoserver-docker:local && \
 # docker push hub.cellosign.com/cellosign/unoserver-docker:local
