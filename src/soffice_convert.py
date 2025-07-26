@@ -1,6 +1,7 @@
 import asyncio
 import base64
 import logging
+import os
 import shutil
 import tempfile
 import uuid
@@ -19,9 +20,6 @@ router = APIRouter(prefix=settings.API_PREFIX)
 logger = logging.getLogger('app')
 
 
-import os
-
-
 @router.post('/convert_data/', response_model=FileConvertResponse)
 async def send(
     request: Request,
@@ -35,6 +33,7 @@ async def send(
     try:
         output_dir = tempfile.mkdtemp(prefix=f'{x_cellosign_request_id}-')
         incoming_file_name = os.path.join(output_dir, f'incoming.{body.document_type}')
+        convert_to = 'pdf' if body.document_type == 'docx' else 'html'
 
         with open(incoming_file_name, 'wb') as f:
             f.write(base64.b64decode(body.document))
@@ -46,32 +45,29 @@ async def send(
             extra={'request_id': request_id},
         )
 
+        command = [
+            'soffice',
+            '--headless',
+            '--convert-to',
+            convert_to,
+            incoming_file_name,
+            '--outdir',
+            output_dir,
+        ]
+        logger.info('running command %s', ' '.join(command))
+
+        process = await asyncio.create_subprocess_exec(
+            *command,
+            stdin=asyncio.subprocess.PIPE,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        stdout, stderr = await process.communicate()
+        logger.info('stdout: %s', str(stdout.decode()))
+        if process.returncode != 0:
+            raise Exception(f'Conversion failed: {stderr.decode()}')
+
         if body.document_type == 'docx':
-            command = [
-                'soffice',
-                '--headless',
-                '--convert-to',
-                'pdf',
-                incoming_file_name,
-                '--outdir',
-                output_dir,
-            ]
-
-            logger.info('running command %s', ' '.join(command))
-
-            process = await asyncio.create_subprocess_exec(
-                *command,
-                stdin=asyncio.subprocess.PIPE,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
-            )
-
-            stdout, stderr = await process.communicate()
-            logger.info('stdout: %s', str(stdout.decode()))
-
-            if process.returncode != 0:
-                raise Exception(f'Conversion failed: {stderr.decode()}')
-
             converted_file = incoming_file_name.replace('.docx', '.pdf')
 
             with open(converted_file, 'rb') as f:
