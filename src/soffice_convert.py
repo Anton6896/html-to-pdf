@@ -19,28 +19,32 @@ router = APIRouter(prefix=settings.API_PREFIX)
 logger = logging.getLogger('app')
 
 
+import os
+
+
 @router.post('/convert_data/', response_model=FileConvertResponse)
 async def send(
     request: Request,
     body: FileConvertRequest,
     x_cellosign_request_id: Annotated[str | None, Header()] = None,
 ):
-    import os
-
     request_id = x_cellosign_request_id or str(uuid.uuid4())
     logger.info('start job [%s]', request_id, extra={'request_id': request_id})
-    file_ = None
     output_dir = None
-    try:
-        document_bytes = base64.b64decode(body.document)
-        suffix = f'.{body.document_type}'
-        tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
-        tmp_file.write(document_bytes)
-        tmp_file.flush()
-        file_ = tmp_file.name
-        output_dir = tempfile.mkdtemp(prefix=f'{x_cellosign_request_id}-')
 
-        logger.info('[%s] saved document to temporary file %s', request_id, file_, extra={'request_id': request_id})
+    try:
+        output_dir = tempfile.mkdtemp(prefix=f'{x_cellosign_request_id}-')
+        incoming_file_name = os.path.join(output_dir, f'incoming.{body.document_type}')
+
+        with open(incoming_file_name, 'wb') as f:
+            f.write(base64.b64decode(body.document))
+
+        logger.info(
+            '[%s] saved document to tmp folder %s',
+            request_id,
+            incoming_file_name,
+            extra={'request_id': request_id},
+        )
 
         if body.document_type == 'docx':
             command = [
@@ -48,7 +52,7 @@ async def send(
                 '--headless',
                 '--convert-to',
                 'pdf',
-                file_,
+                incoming_file_name,
                 '--outdir',
                 output_dir,
             ]
@@ -68,7 +72,7 @@ async def send(
             if process.returncode != 0:
                 raise Exception(f'Conversion failed: {stderr.decode()}')
 
-            converted_file = os.path.join(output_dir, os.path.basename(file_).replace('.docx', '.pdf'))
+            converted_file = incoming_file_name.replace('.docx', '.pdf')
 
             with open(converted_file, 'rb') as f:
                 converted_data = f.read()
@@ -101,21 +105,6 @@ async def send(
         return FileConvertResponse(document=None, error=str(e))
 
     finally:
-        import os
-
-        if file_ and os.path.isfile(file_):
-            try:
-                os.remove(file_)
-                logger.info('[%s] removed temporary file %s', request_id, file_, extra={'request_id': request_id})
-            except Exception as cleanup_error:
-                logger.warning(
-                    '[%s] failed to remove temporary file %s: %s',
-                    request_id,
-                    file_,
-                    cleanup_error,
-                    extra={'request_id': request_id},
-                )
-
         if output_dir and os.path.isdir(output_dir):
             try:
                 shutil.rmtree(output_dir)
