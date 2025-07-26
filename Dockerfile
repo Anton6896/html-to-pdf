@@ -32,9 +32,10 @@ RUN soffice --version
 FROM python-upgraded AS builder
 ADD requirements.txt .
 
-RUN set -xe; \
-    mkdir /wheels && pip wheel -w /wheels -r requirements.txt; \
-    rm -rf /var/cache/apk/* /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.cache /requirements.txt
+RUN apk add --no-cache --virtual .build-deps build-base libffi-dev openssl-dev && \
+    mkdir /wheels && pip wheel -w /wheels -r requirements.txt && \
+    apk del .build-deps && \
+    rm -rf /tmp/* /var/tmp/* /root/.cache
 
 
 FROM python-upgraded AS main
@@ -45,7 +46,7 @@ EXPOSE 8022
 COPY --from=builder /wheels /wheels
 
 RUN set -xe; \
-    pip install /wheels/* && \
+    pip install --no-cache-dir /wheels/* && \
     rm -rf /var/cache/apk/* /var/lib/apt/lists/* /tmp/* /var/tmp/* /root/.cache /wheels
 
 COPY ./src ./src
