@@ -70,31 +70,16 @@ async def send(
         if body.document_type == 'docx':
             converted_file = incoming_file_name.replace('.docx', '.pdf')
 
-            with open(converted_file, 'rb') as f:
-                converted_data = f.read()
-
-            return FileConvertResponse(document=base64.b64encode(converted_data).decode())
-
         elif body.document_type == 'xlsx':
-            pass
+            converted_file = incoming_file_name.replace('.xlsx', '.html')
 
         else:
             return FileConvertResponse(document=None, error=f'{body.document_type}, can not be handled')
 
-        """
-        1. get file from request 
-        2. save localy as tmp file 
-            - check file type xlsx | docx 
-            - save as tmp file
+        with open(converted_file, 'rb') as f:
+            converted_data = f.read()
 
-        3. send file to convertion with 
-        soffice --headless --convert-to pdf 1-page.docx --outdir /data && cat /data/myfile.pdf
-        soffice --headless --convert-to html your_file.xlsx --outdir /your/output/dir
-        4. read the converted file
-        5. send return it to client
-        """
-
-        return FileConvertResponse(document='some document data')
+        return FileConvertResponse(document=base64.b64encode(converted_data).decode())
 
     except Exception as e:  # noqa
         logger.exception('%s unexpected', request_id, extra={'request_id': request_id})
@@ -118,12 +103,3 @@ async def send(
                     cleanup_error,
                     extra={'request_id': request_id},
                 )
-
-
-"""
-
-curl -L -m 120 "http://localhost:8022/api/v1/convert_data/" -H "Content-Type: application/json" -d "{
-    \"document\": \"13213123\",
-    \"document_type\": \"docx\"
-}" | jq .
-"""
