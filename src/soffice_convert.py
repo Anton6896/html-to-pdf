@@ -12,6 +12,7 @@ from fastapi import Header
 from fastapi import Request
 
 from src.config import settings
+from src.metrics import FILE_SIZE_HISTOGRAM
 from src.models import FileConvertRequest
 from src.models import FileConvertResponse
 
@@ -34,9 +35,11 @@ async def send(
         output_dir = tempfile.mkdtemp(prefix=f'{x_cellosign_request_id}-')
         incoming_file_name = os.path.join(output_dir, f'incoming.{body.document_type}')
         convert_to = 'pdf' if body.document_type == 'docx' else 'html'
+        doc_in_bytes = base64.b64decode(body.document)
+        FILE_SIZE_HISTOGRAM.labels('bytes').observe(len(doc_in_bytes))
 
         with open(incoming_file_name, 'wb') as f:
-            f.write(base64.b64decode(body.document))
+            f.write(doc_in_bytes)
 
         logger.info(
             '[%s] saved document to tmp folder %s',

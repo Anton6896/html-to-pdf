@@ -61,7 +61,9 @@ main_app_lifespan = app.router.lifespan_context
 @asynccontextmanager
 async def lifespan_wrapper(app):
     logger.info('sub process starter')
-
+    """
+    not sure if we need to start some health check on server start event
+    """
     async with main_app_lifespan(app) as state:
         yield state
 
