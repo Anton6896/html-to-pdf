@@ -35,6 +35,14 @@ async def send(
         output_dir = tempfile.mkdtemp(prefix=f'{x_cellosign_request_id}-')
         incoming_file_name = os.path.join(output_dir, f'incoming.{body.document_type}')
         convert_to = 'pdf' if body.document_type == 'docx' else 'html'
+        logger.info(
+            'start job [%s], will convert %s -> %s',
+            request_id,
+            body.document_type,
+            convert_to,
+            extra={'request_id': request_id},
+        )
+
         doc_in_bytes = base64.b64decode(body.document)
         FILE_SIZE_HISTOGRAM.labels('bytes').observe(len(doc_in_bytes))
 
