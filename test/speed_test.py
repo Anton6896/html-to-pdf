@@ -22,8 +22,8 @@ async def do_test():
     overall_start = time.perf_counter()
 
     responses = []
-    chunk_size = 10
-    async with httpx.AsyncClient() as client:
+    chunk_size = 25
+    async with httpx.AsyncClient(timeout=120) as client:
         for i in range(0, len(payloads), chunk_size):
             print(f'working on {i} : {i + chunk_size}')
 
