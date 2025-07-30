@@ -15,7 +15,8 @@ class Settings(BaseSettings):
     SENTRY_RATE: float = int(os.getenv('SENTRY_SAMPLE_RATE', '50')) / 100.0
 
     LOGGING_LEVEL: str = os.getenv('LOGGING_LEVEL', 'DEBUG')
-    API_PREFIX: str = os.getenv('ODIX_API_PREFIX', '/api/v1')
+    API_PREFIX: str = os.getenv('API_PREFIX', '/api/v1')
+    LEGACY_API_PREFIX: str = os.getenv('LEGACY_API_PREFIX', '/api/convert')
     REQUEST_TIMEOUT: float = float(os.getenv('REQUEST_TIMEOUT') or 120.0)  # 2 min timeout
 
     IS_HEALTH_CHECK_ON: bool = os.getenv('IS_HEALTH_CHECK_ON', 'yes') in ['yes', 1]

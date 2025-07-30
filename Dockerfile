@@ -1,8 +1,8 @@
-FROM hub.cellosign.com/cellosign/fonts-scratch AS fonts
+# FROM hub.cellosign.com/cellosign/fonts-scratch AS fonts
 FROM python:3.13-alpine AS python-upgraded
 
 RUN echo "adding fonts"
-COPY --from=fonts / /usr/share/fonts/cellosign
+# COPY --from=fonts / /usr/share/fonts/cellosign
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

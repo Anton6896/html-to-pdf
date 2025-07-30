@@ -16,6 +16,7 @@ from src.config import init_logger
 from src.config import settings
 from src.errors import CustomHTTPException
 from src.metrics import REQUEST_TIME
+from src.old_soffice_convert import router as old_soffice_convert
 from src.soffice_convert import router as soffice_router
 
 
@@ -68,7 +69,6 @@ async def lifespan_wrapper(app):
         yield state
 
 
-
 @app.middleware('http')
 async def log_request(request: Request, call_next) -> Response:
     start = time.time()
@@ -92,3 +92,4 @@ Instrumentator().instrument(
 
 # routers
 app.include_router(soffice_router)
+app.include_router(old_soffice_convert)
