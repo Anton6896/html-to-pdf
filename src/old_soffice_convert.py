@@ -5,21 +5,17 @@ import os
 import shutil
 import tempfile
 import uuid
-from typing import Annotated
 
 # import magic
 from fastapi import APIRouter
 from fastapi import File
 from fastapi import Header
 from fastapi import HTTPException
-from fastapi import Request
 from fastapi import UploadFile
 from fastapi.responses import Response
 
 from src.config import settings
 from src.metrics import FILE_SIZE_HISTOGRAM
-from src.models import FileConvertRequest
-from src.models import FileConvertResponse
 
 router = APIRouter(prefix=settings.LEGACY_API_PREFIX)
 
