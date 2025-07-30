@@ -72,7 +72,10 @@ async def xhtml_file(
         converted_file = incoming_file_name.replace('.xlsx', '.html')
 
         with open(converted_file, 'rb') as f:
-            return Response(f.read())
+            doc_in_bytes = f.read()
+
+        FILE_SIZE_HISTOGRAM.labels('bytes').observe(len(doc_in_bytes))
+        return Response(doc_in_bytes)
 
     except Exception as e:
         logger.exception('%s unexpected exception', request_id, extra=extra)
