@@ -72,9 +72,7 @@ async def xhtml_file(
         converted_file = incoming_file_name.replace('.xlsx', '.html')
 
         with open(converted_file, 'rb') as f:
-            converted_data = f.read()
-
-        return Response(converted_data)
+            return Response(f.read())
 
     except Exception as e:
         logger.exception('%s unexpected exception', request_id, extra=extra)
