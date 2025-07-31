@@ -26,3 +26,8 @@ curl -L -m 120 "http://localhost:8022/api/v1/convert_data/" -H "x-cellosign-requ
 curl -L -m 60 "http://localhost:8022/api/convert/xhtml/" \
 -F "file=@\"/Users/antonr/Documents/work/test_data/testing.xlsx\""
 ```
+
+```sh
+curl -L -m 60 "http://localhost:8022/api/convert/" \
+-F "file=@\"/Users/antonr/Documents/work/test_data/1-page.docx\""
+```
