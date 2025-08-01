@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: {{ .Release.Name }}-cs-unoconv
+  name: {{ .Release.Name }}-cs-unoconv
+spec:
+  replicas: {{ index .Values "unoconv" "replicas" }}
+  selector:
+    matchLabels:
+      k8s-app: {{ .Release.Name }}-cs-unoconv
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ .Release.Name }}-cs-unoconv
+    spec:
+      affinity:
+{{ toYaml (index .Values "unoconv" "affinity") | indent 8 }}
+      priorityClassName: cellosign-{{.Values.global.envPriorityName }}-{{ index .Values "unoconv" "servicePriorityName" }}
+      imagePullSecrets:
+      - name: cs-registry
+      containers:
+      - name: {{ .Release.Name }}-cs-unoconv
+        image: {{ index .Values "unoconv" "repo" }}:{{ index .Values "unoconv" "tag" }}
+        imagePullPolicy: {{ index .Values "imagePullPolicy" }}
+        command: ["/opt/svc/unoconv"]
+        livenessProbe:
+          tcpSocket:
+            port: 2002
+        readinessProbe:
+          tcpSocket:
+            port: 2002
+        ports:
+        - containerPort: 2002
+          name: api
+          protocol: TCP
+        resources:
+{{ toYaml (index .Values "unoconv" "resources") | indent 10 }}
+      serviceAccountName: {{ .Release.Name }}-cs-unoconv

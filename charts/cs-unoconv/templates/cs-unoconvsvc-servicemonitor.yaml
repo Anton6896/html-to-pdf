@@ -1,0 +1,14 @@
+{{- if .Values.global.features.prometheus.enabled }}
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: {{ .Release.Name }}-cs-unoconvsvc-servicemonitor
+  labels:
+    environment: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      k8s-app: {{ .Release.Name }}-cs-unoconvsvc
+  endpoints:
+  - port: http
+{{ end }}

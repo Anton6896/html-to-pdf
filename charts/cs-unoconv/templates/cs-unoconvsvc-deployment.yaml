@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    k8s-app: {{ .Release.Name }}-cs-unoconvsvc
+  name: {{ .Release.Name }}-cs-unoconvsvc
+spec:
+  replicas: {{ index .Values "unoconvsvc" "replicas" }}
+  selector:
+    matchLabels:
+      k8s-app: {{ .Release.Name }}-cs-unoconvsvc
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ .Release.Name }}-cs-unoconvsvc
+    spec:
+      affinity:
+{{ toYaml (index .Values "unoconvsvc" "affinity") | indent 8 }}
+      priorityClassName: cellosign-{{.Values.global.envPriorityName }}-{{ index .Values "unoconvsvc" "servicePriorityName" }}
+      imagePullSecrets:
+      - name: cs-registry
+      containers:
+      - name: {{ .Release.Name }}-cs-unoconvsvc
+        image: {{ index .Values "unoconvsvc" "repo" }}:{{ index .Values "unoconvsvc" "tag" }}
+        env:
+        - name: SENTRY_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-env-sentry-configmap
+              key: environment
+
+        - name: SENTRY_DSN
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-env-sentry-configmap
+              key: {{ .Values.sentry.sentryDsnKey }}
+
+        - name: SENTRY_RELEASE
+          value: '{{ .Chart.Version }}'
+
+        - name: SENTRY_SAMPLE_RATE
+          value: '{{ .Values.sentry.rate }}'
+
+        - name: UNOCONV_HOST
+          value: "{{ .Release.Name }}-cs-unoconv:2002"
+
+        imagePullPolicy: {{ index .Values "imagePullPolicy" }}
+        command: ["/opt/svc/unoconvsvc"]
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+        readinessProbe:
+          tcpSocket:
+            port: 8000
+        ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+        resources:
+{{ toYaml (index .Values "unoconvsvc" "resources") | indent 10 }}
+      serviceAccountName: {{ .Release.Name }}-cs-unoconvsvc

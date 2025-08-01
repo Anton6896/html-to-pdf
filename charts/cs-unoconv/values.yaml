@@ -1,0 +1,37 @@
+global:
+  envPriorityName: dev
+  features:
+    prometheus:
+      enabled: true
+
+imagePullPolicy: IfNotPresent
+unoconv:
+  repo: hub.cellosign.com/cellosign/soffice-convert
+  tag: 4.2.0
+  replicas: 1
+  affinity: {}
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  servicePriorityName: feature
+
+
+unoconvsvc:
+  repo: hub.cellosign.com/cellosign/soffice-convert
+  tag: 4.2.0
+  replicas: 1
+  affinity: {}
+  resources:
+    limits:
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  servicePriorityName: feature
+
+sentry:
+  sentryDsnKey: 'dsn-soffice-convert'
+  rate: '50'

@@ -1,5 +1,16 @@
 # soffice
 
+## docker
+
+```bash
+docker buildx build -f Dockerfile --platform linux/amd64 -t unoserver-worker:my .
+docker run --platform linux/amd64 --rm -it -u 0  -v "$(pwd)/src":/src -w / unoserver-worker:my bash
+
+docker tag unoserver-worker:my hub.cellosign.com/cellosign/unoserver-worker:local && \
+docker push hub.cellosign.com/cellosign/unoserver-worker:local
+
+```
+
 ## legacy api
 
 ```sh

@@ -53,11 +53,3 @@ COPY ./src ./src
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8022"]
-
-
-
-# docker buildx build -f Dockerfile --platform linux/amd64 -t unoserver-docker:my .
-# docker run --platform linux/amd64 --rm -it -u 0  -v "$(pwd)/src":/src -w / unoserver-docker:my bash
-
-# docker tag unoserver-docker:my hub.cellosign.com/cellosign/unoserver-docker:local && \
-# docker push hub.cellosign.com/cellosign/unoserver-docker:local
