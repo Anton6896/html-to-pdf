@@ -9,7 +9,6 @@ ENV PYTHONUNBUFFERED=1
 ENV TZ=Asia/Jerusalem
 ENV PYTHONPATH="${PYTHONPATH}:/src"
 
-
 RUN echo "adding office to apk"
 RUN apk upgrade --no-cache
 RUN set -xe; \
@@ -28,7 +27,6 @@ RUN set -xe; \
 RUN cat /etc/os-release
 RUN soffice --version
 
-
 FROM python-upgraded AS builder
 ADD requirements.txt .
 
@@ -36,7 +34,6 @@ RUN apk add --no-cache --virtual .build-deps build-base libffi-dev openssl-dev &
     mkdir /wheels && pip wheel -w /wheels -r requirements.txt && \
     apk del .build-deps && \
     rm -rf /tmp/* /var/tmp/* /root/.cache
-
 
 FROM python-upgraded AS main
 
@@ -53,3 +50,7 @@ COPY ./src ./src
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8022"]
+
+FROM main AS dev
+COPY requirements.dev.txt /requirements.dev.txt
+RUN pip install -r /requirements.dev.txt

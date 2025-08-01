@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import os
 import random
 import time
@@ -11,11 +12,11 @@ data_folder = os.path.join(ROOT, 'data')
 
 
 async def do_test():
-    with open(os.path.join(data_folder, 'file1.txt')) as f:
-        data_1 = {'document': f.read(), 'document_type': 'docx'}
+    with open(os.path.join(data_folder, '1-page.docx'), 'rb') as f:
+        data_1 = {'document': base64.b64encode(f.read()).decode(), 'document_type': 'docx'}
 
-    with open(os.path.join(data_folder, 'file2.txt')) as f:
-        data_2 = {'document': f.read(), 'document_type': 'xlsx'}
+    with open(os.path.join(data_folder, 'testing.xlsx'), 'rb') as f:
+        data_2 = {'document': base64.b64encode(f.read()).decode(), 'document_type': 'xlsx'}
 
     payloads = [data_1, data_2] * 50
     random.shuffle(payloads)

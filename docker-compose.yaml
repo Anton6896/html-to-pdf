@@ -8,6 +8,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: dev
     restart: unless-stopped
     volumes:
       - "./src:/src"
