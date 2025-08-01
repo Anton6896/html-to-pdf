@@ -41,8 +41,8 @@ spec:
         - name: SENTRY_SAMPLE_RATE
           value: '{{ .Values.sentry.rate }}'
 
-        - name: UNOCONV_HOST
-          value: "{{ .Release.Name }}-cs-unoconv:2002"
+        - name: LOGGING_LEVEL
+          value: '{{ .Values.loggingLevel }}'
 
         imagePullPolicy: {{ index .Values "imagePullPolicy" }}
         command: ["/opt/svc/unoconvsvc"]
