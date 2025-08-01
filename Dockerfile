@@ -38,7 +38,7 @@ RUN apk add --no-cache --virtual .build-deps build-base libffi-dev openssl-dev &
 FROM python-upgraded AS main
 
 WORKDIR /
-EXPOSE 8022
+EXPOSE 8000
 
 COPY --from=builder /wheels /wheels
 
@@ -49,7 +49,7 @@ RUN set -xe; \
 COPY ./src ./src
 
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8022"]
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 FROM main AS dev
 COPY requirements.dev.txt /requirements.dev.txt

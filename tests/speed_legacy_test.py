@@ -5,8 +5,8 @@ import time
 
 import httpx
 
-url1 = 'http://localhost:8022/api/convert/'
-url2 = 'http://localhost:8022/api/convert/xhtml/'
+url1 = 'http://localhost:8000/api/convert/'
+url2 = 'http://localhost:8000/api/convert/xhtml/'
 ROOT = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.path.join(ROOT, 'data')
 

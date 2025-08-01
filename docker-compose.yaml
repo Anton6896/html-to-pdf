@@ -14,9 +14,9 @@ services:
       - "./src:/src"
       - "./tests:/tests"
     ports:
-      - "8022:8022"
+      - "8000:8000"
     expose:
-      - "8022"
+      - "8000"
     environment:
       # LOGGING_LEVEL: "INFO"
       IS_HEALTH_CHECK_ON: "no"

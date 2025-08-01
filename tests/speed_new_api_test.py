@@ -6,7 +6,7 @@ import time
 
 import httpx
 
-url = 'http://localhost:8022/api/v1/convert_data/'
+url = 'http://localhost:8000/api/v1/convert_data/'
 ROOT = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.path.join(ROOT, 'data')
 
