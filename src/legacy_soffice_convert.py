@@ -7,7 +7,6 @@ import uuid
 
 # import magic
 from fastapi import APIRouter
-from fastapi import File
 from fastapi import Header
 from fastapi import HTTPException
 from fastapi import UploadFile
@@ -120,18 +119,14 @@ async def post(
         with open(incoming_file_name, 'wb') as f:
             f.write(file.file.read())
 
-        command = [
-            'soffice',
-            '--headless',
-            '--convert-to',
-            'pdf',
-            incoming_file_name,
-        ]
+        command = ['soffice', '--headless', '--convert-to']
 
         if conformance == CONFORMANCE_PDFA:
-            command.append('-eSelectedPdfVersion=1')
-            command.append('-eUseTaggedPDF=1')
+            command.append('pdf:writer_pdf_Export:SelectPdfVersion=true,UseTaggedPDF=true')
+        else:
+            command.append('pdf')
 
+        command.append(incoming_file_name)
         command.append('--outdir')
         command.append(output_dir)
 
@@ -154,7 +149,7 @@ async def post(
 
         with open(converted_file, 'rb') as f:
             doc_in_bytes = f.read()
-        
+
         type_of_data = magic.from_buffer(doc_in_bytes, mime=True)
         logger.info('%s: type_of_data: %s', request_id, type_of_data, extra=extra)
 

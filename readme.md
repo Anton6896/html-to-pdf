@@ -15,13 +15,19 @@ docker push hub.cellosign.com/cellosign/unoserver-worker:local
 
 ```sh
 curl -L -m 60 "http://localhost:8022/api/convert/xhtml/" \
+-H "x-cellosign-request-id: ant-123-abcd" \
 -F "file=@\"/Users/antonr/Documents/work/test_data/testing.xlsx\"" \
 -o my.html
 ```
 
+- has 2 options here
+  - `http://localhost:8022/api/convert/?conformance=pdf/a`
+  - `http://localhost:8022/api/convert/?conformance=pdf`
+  
 ```sh
-curl -L -m 60 "http://localhost:8022/api/convert/" \
--F "file=@\"/Users/antonr/Documents/work/test_data/1-page.docx\"" \
+curl -L -m 60 'http://localhost:8022/api/convert/?conformance=pdf/a' \
+-H 'x-cellosign-request-id: ant-123-abcd' \
+-F 'file=@"/Users/antonr/Documents/work/test_data/1-page.docx"' \
 -o my.pdf
 ```
 
