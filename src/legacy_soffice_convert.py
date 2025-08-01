@@ -1,5 +1,4 @@
 import asyncio
-import base64
 import logging
 import os
 import shutil
@@ -106,6 +105,8 @@ async def post(
     conformance: str | None = None,
     x_cellosign_request_id: str | None = Header(None),
 ):
+    import magic
+
     request_id = x_cellosign_request_id or str(uuid.uuid4())
     extra = {'request_id': request_id}
     output_dir = None
@@ -153,6 +154,12 @@ async def post(
 
         with open(converted_file, 'rb') as f:
             doc_in_bytes = f.read()
+        
+        type_of_data = magic.from_buffer(doc_in_bytes, mime=True)
+        logger.info('%s: type_of_data: %s', request_id, type_of_data, extra=extra)
+
+        if type_of_data != 'application/pdf':
+            raise Exception(f'{request_id}: issue while generating pdf')
 
         FILE_SIZE_HISTOGRAM.labels('bytes').observe(len(doc_in_bytes))
         return Response(doc_in_bytes)

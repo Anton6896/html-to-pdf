@@ -15,7 +15,8 @@ docker push hub.cellosign.com/cellosign/unoserver-worker:local
 
 ```sh
 curl -L -m 60 "http://localhost:8022/api/convert/xhtml/" \
--F "file=@\"/Users/antonr/Documents/work/test_data/testing.xlsx\""
+-F "file=@\"/Users/antonr/Documents/work/test_data/testing.xlsx\"" \
+-o my.html
 ```
 
 ```sh
