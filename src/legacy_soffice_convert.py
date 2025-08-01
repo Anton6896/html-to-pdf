@@ -5,7 +5,6 @@ import shutil
 import tempfile
 import uuid
 
-# import magic
 from fastapi import APIRouter
 from fastapi import Header
 from fastapi import HTTPException
@@ -25,7 +24,7 @@ CONFORMANCE_PDFA = 'pdf/a'
 
 @router.post('/xhtml')
 @router.post('/xhtml/')
-async def xhtml_file(
+async def xlsx_to_html(
     file: UploadFile,
     x_cellosign_request_id: str | None = Header(None),
 ):
@@ -99,7 +98,7 @@ async def xhtml_file(
 
 
 @router.post('/')
-async def post(
+async def html_tp_pdf(
     file: UploadFile,
     conformance: str | None = None,
     x_cellosign_request_id: str | None = Header(None),
