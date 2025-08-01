@@ -27,7 +27,7 @@ CONFORMANCE_PDFA = 'pdf/a'
 @router.post('/xhtml')
 @router.post('/xhtml/')
 async def xhtml_file(
-    file: UploadFile = File(...),
+    file: UploadFile,
     x_cellosign_request_id: str | None = Header(None),
 ):
     request_id = x_cellosign_request_id or str(uuid.uuid4())
@@ -101,7 +101,7 @@ async def xhtml_file(
 
 @router.post('/')
 async def post(
-    file: UploadFile = File(...),
+    file: UploadFile,
     conformance: str | None = None,
     x_cellosign_request_id: str | None = Header(None),
 ):

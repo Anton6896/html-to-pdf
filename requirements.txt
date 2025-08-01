@@ -7,7 +7,3 @@ uvicorn==0.34.3
 
 python-magic==0.4.27
 python-multipart==0.0.20
-
-
-# blinker==1.7.0
-# pytz==2024.1
