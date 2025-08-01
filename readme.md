@@ -20,7 +20,8 @@ curl -L -m 60 "http://localhost:8022/api/convert/xhtml/" \
 
 ```sh
 curl -L -m 60 "http://localhost:8022/api/convert/" \
--F "file=@\"/Users/antonr/Documents/work/test_data/1-page.docx\""
+-F "file=@\"/Users/antonr/Documents/work/test_data/1-page.docx\"" \
+-o my.pdf
 ```
 
 ## new API

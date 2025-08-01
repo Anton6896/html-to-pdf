@@ -15,7 +15,7 @@ from starlette.responses import JSONResponse
 from src.config import init_logger
 from src.config import settings
 from src.errors import CustomHTTPException
-from src.legacy_soffice_convert import router as old_soffice_convert
+from src.legacy_soffice_convert import router as legacy_soffice_convert
 from src.metrics import REQUEST_TIME
 from src.soffice_convert import router as soffice_router
 
@@ -92,4 +92,4 @@ Instrumentator().instrument(
 
 # routers
 app.include_router(soffice_router)
-app.include_router(old_soffice_convert)
+app.include_router(legacy_soffice_convert)

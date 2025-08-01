@@ -4,14 +4,7 @@ import magic
 import requests
 
 """
-export UNOCONV_HOST=localhost:2002
-unoconv --listener --server=0.0.0.0 --port=2002 -vvv 2>&1 &
-uvicorn soffice.main:app --host 0.0.0.0 --port 8000 --log-config /opt/svc/uvicorn_logconfig.json 2>&1 &
 
-## must wait till unoconv is ready
-docker run --rm -it --platform linux/amd64 -v ${PWD}/tests:/tests unoconv-test:test1 bash
-
-pytest -vv /tests/test_service.py::test_docx_file_to_pdf
 """
 
 SOFFICE_CONVERT_URL = 'http://localhost:8000/api/convert/'
