@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
     volumes:
       - "./src:/src"
-      # - "./tests:/tests"
+      - "./tests:/tests"
     ports:
       - "8022:8022"
     expose:
